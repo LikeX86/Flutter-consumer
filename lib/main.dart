@@ -12,25 +12,13 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => UserProvider()),
-        // Adicione provedores adicionais aqui, como ProductProvider
-      ],
-      child: MaterialApp(
-        title: 'Your App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        initialRoute: '/login', // Defina sua tela de login como inicial
-        routes: {
-          '/login': (context) => LoginScreen(),
-          '/register': (context) => RegisterScreen(),
-          '/home': (context) =>
-              HomeScreen(), // Adicione a rota para a tela Home
-          // Adicione rotas adicionais aqui para outras telas do aplicativo
-        },
+    return MaterialApp(
+      title: 'Minha Loja',
+      theme: ThemeData(
+        primarySwatch: Colors.green, // Cor principal do aplicativo
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      home: LoginScreen(), // Substitua pelo nome da sua tela de login
     );
   }
 }

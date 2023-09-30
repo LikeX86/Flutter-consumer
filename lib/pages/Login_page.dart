@@ -1,15 +1,18 @@
 import 'package:apif/pages/ProductList_page.dart';
 import 'package:apif/services/AuthService.dart';
+import 'package:apif/services/ProductService.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController loginController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final AuthService authService =
+      AuthService(); // Crie uma instância de AuthService
+  final ProductService productService =
+      ProductService(); // Crie uma instância de ProductService
 
   @override
   Widget build(BuildContext context) {
-    final authService = AuthService();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
@@ -38,18 +41,18 @@ class LoginScreen extends StatelessWidget {
 
                   if (loggedIn) {
                     try {
-                      final productList = await authService
-                          .fetchProducts(); // Buscar a lista de produtos
-                      final context = Navigator.of(
-                          context); // Captura o BuildContext fora do bloco assíncrono
-                      context.pushReplacement(
+                      final token = await authService.getAuthToken();
+                      final productList =
+                          await productService.fetchProducts(token!);
+
+                      Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
-                          builder: (context) =>
+                          builder: (BuildContext context) =>
                               ProductListScreen(products: productList),
                         ),
                       );
                     } catch (e) {
-                      // Tratar erros ao buscar a lista de produtos, se necessário
+                      // Trate os erros adequadamente
                       print('Erro ao buscar a lista de produtos: $e');
                     }
                   } else {

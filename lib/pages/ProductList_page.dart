@@ -1,9 +1,14 @@
 import 'package:apif/models/Product.dart';
+import 'package:apif/pages/AddProduct_page.dart';
 import 'package:apif/services/AuthService.dart';
 import 'package:apif/services/ProductService.dart';
 import 'package:flutter/material.dart';
 
 class ProductListScreen extends StatefulWidget {
+  final List<Product> products;
+
+  ProductListScreen({required this.products});
+
   @override
   _ProductListScreenState createState() => _ProductListScreenState();
 }
@@ -11,29 +16,36 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
   final productService = ProductService();
   final authService = AuthService();
-  // Crie uma instância de ProductService
 
-  late List<Product> productList; // Lista de produtos a serem exibidos
+  late List<Product> productList = [];
 
   @override
   void initState() {
     super.initState();
-    _loadProducts(); // Chamada para carregar os produtos ao iniciar a tela
+    _loadProducts();
   }
 
   Future<void> _loadProducts() async {
-    final authToken = (await authService.getAuthToken()) ??
-        ''; // Usar uma string vazia como valor padrão
+    final authToken = (await authService.getAuthToken()) ?? '';
 
     try {
       final fetchedProducts = await productService.fetchProducts(authToken);
       setState(() {
-        productList = fetchedProducts; // Atualiza a lista de produtos
+        productList = fetchedProducts;
       });
     } catch (e) {
-      // Trate os erros ao buscar a lista de produtos, se necessário
       print('Erro ao buscar a lista de produtos: $e');
     }
+  }
+
+  void updateProductList() {
+    _loadProducts();
+  }
+
+  void _handleProductAdded() {
+    // Chamada quando um novo produto é adicionado
+    // Atualiza a lista de produtos
+    _loadProducts();
   }
 
   @override
@@ -56,6 +68,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 );
               },
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navegar para a tela de cadastro de produtos
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => AddProductScreen(
+                updateProductList: _loadProducts,
+                context: context, // Passe o contexto aqui
+              ),
+            ),
+          );
+        },
+        child: Icon(Icons.add), // Ícone de adição
+      ),
     );
   }
 }
